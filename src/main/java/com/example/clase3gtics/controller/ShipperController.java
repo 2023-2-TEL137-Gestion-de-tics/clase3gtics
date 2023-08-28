@@ -71,6 +71,46 @@ public class ShipperController {
 
     }
 
+    @PostMapping("/buscarPorNombre")
+    public String buscarPorNombre(@RequestParam("searchField") String searchField, Model model) {
+
+        //List<Shipper> lista =  shipperRepository.findByCompanyName(searchField);
+        List<Shipper> lista = shipperRepository.buscarPorNombreCompania(searchField);
+        model.addAttribute("shipperList", lista);
+        model.addAttribute("textoBuscado", searchField);
+
+        return "shipper/list";
+    }
+
+    @GetMapping("/buscarTelefonoCon5")
+    public String buscarTelefonoCon5(Model model) {
+
+        List<Shipper> lista = shipperRepository.buscarPorTelefonoConNumero5("5");
+        model.addAttribute("shipperList", lista);
+
+        return "shipper/list";
+    }
+
+    @GetMapping("/editPhone")
+    public String editarTransportistaSoloPhone(Model model, @RequestParam("id") int id) {
+
+        Optional<Shipper> optShipper = shipperRepository.findById(id);
+
+        if (optShipper.isPresent()) {
+            Shipper shipper = optShipper.get();
+            model.addAttribute("shipper", shipper);
+            return "shipper/editFrmPhone";
+        } else {
+            return "redirect:/shipper/list";
+        }
+    }
+
+    @PostMapping("/updateOnlyPhone")
+    public String updateOnlyPhone(Shipper shipper) {
+        shipperRepository.actualizarTelefono(shipper.getPhone(),shipper.getShipperId());
+
+        return "redirect:/shipper/list";
+    }
 
 }
 
